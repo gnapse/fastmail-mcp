@@ -1,3 +1,5 @@
+import type JamClient from "jmap-jam";
+
 function mapEmailListItem(email: {
     from: { name?: string; email: string }[] | undefined;
     subject: string | undefined;
@@ -20,7 +22,7 @@ export async function getPaginatedEmailResults({
     limit,
     total,
 }: {
-    client: any;
+    client: JamClient;
     accountId: string;
     ids: string[];
     position: number;

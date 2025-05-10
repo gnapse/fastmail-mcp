@@ -35,8 +35,8 @@ export function registerGetEmailDetailsTool(server: McpServer) {
                 };
             }
 
-            const from = email.from?.map((a: any) => a.email).join(", ") || "";
-            const to = email.to?.map((a: any) => a.email).join(", ") || "";
+            const from = email.from?.map((a) => a.email).join(", ") || "";
+            const to = email.to?.map((a) => a.email).join(", ") || "";
             const date = email.receivedAt || "";
             const subject = email.subject || "(no subject)";
             const preview = email.preview || "";

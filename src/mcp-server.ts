@@ -4,6 +4,7 @@ import { registerListEmailsTool } from "./tools/list-emails.js";
 import { registerListMailboxesTool } from "./tools/list-mailboxes.js";
 import { registerGetEmailDetailsTool } from "./tools/get-email-details.js";
 import { registerSearchEmailsTool } from "./tools/search-emails.js";
+import { registerListConversationTool } from "./tools/list-conversation.js";
 
 export async function startMcpServer() {
     const server = new McpServer({
@@ -15,6 +16,7 @@ export async function startMcpServer() {
     registerListMailboxesTool(server);
     registerGetEmailDetailsTool(server);
     registerSearchEmailsTool(server);
+    registerListConversationTool(server);
 
     const transport = new StdioServerTransport();
     await server.connect(transport);

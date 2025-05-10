@@ -2,6 +2,7 @@ import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { createJmapClient } from "../jmap-client.js";
 import { getPaginatedEmailResults } from "../helpers/email-list-helpers.js";
+import { errorContent, jsonContent } from "../helpers/mcp-content.js";
 
 export function registerSearchEmailsTool(server: McpServer) {
     server.tool(
@@ -115,11 +116,7 @@ export function registerSearchEmailsTool(server: McpServer) {
             });
 
             if (!query.ids.length) {
-                return {
-                    content: [
-                        { type: "text", text: "No matching emails found." },
-                    ],
-                };
+                return errorContent("No matching emails found.");
             }
 
             const result = await getPaginatedEmailResults({
@@ -131,15 +128,7 @@ export function registerSearchEmailsTool(server: McpServer) {
                 total: query.total ?? 0,
             });
 
-            return {
-                content: [
-                    {
-                        type: "text",
-                        mimeType: "application/json",
-                        text: JSON.stringify(result),
-                    },
-                ],
-            };
+            return jsonContent(result);
         }
     );
 }

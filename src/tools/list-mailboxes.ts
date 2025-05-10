@@ -1,5 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { createJmapClient } from "../jmap-client.js";
+import { errorContent, jsonContent } from "../helpers/mcp-content.js";
 
 export function registerListMailboxesTool(server: McpServer) {
     server.tool(
@@ -11,9 +12,7 @@ export function registerListMailboxesTool(server: McpServer) {
 
             const [query] = await client.api.Mailbox.query({ accountId });
             if (!query.ids.length) {
-                return {
-                    content: [{ type: "text", text: "No mailboxes found." }],
-                };
+                return errorContent("No mailboxes found.");
             }
 
             const [mailboxes] = await client.api.Mailbox.get({
@@ -38,15 +37,7 @@ export function registerListMailboxesTool(server: McpServer) {
                 parentId: mb.parentId ?? null,
             }));
 
-            return {
-                content: [
-                    {
-                        type: "text",
-                        mimeType: "application/json",
-                        text: JSON.stringify({ mailboxes: mailboxesList }),
-                    },
-                ],
-            };
+            return jsonContent({ mailboxes: mailboxesList });
         }
     );
 }
