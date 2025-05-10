@@ -11,17 +11,24 @@ export function registerListEmailsTool(server: McpServer) {
                 .int()
                 .min(1)
                 .max(50)
+                .default(10)
                 .optional()
                 .describe("The maximum number of emails to return"),
+            mailboxId: z
+                .string()
+                .optional()
+                .describe("If provided, only list emails from this mailbox ID"),
         },
-        async ({ limit }) => {
+        async ({ limit, mailboxId }) => {
             const client = createJmapClient();
             const accountId = await client.getPrimaryAccount();
-            // Query for emails, sorted by receivedAt descending
+            // Query for emails, optionally filtered by mailbox
+            const filter = mailboxId ? { inMailbox: mailboxId } : undefined;
             const [query] = await client.api.Email.query({
                 accountId,
                 sort: [{ property: "receivedAt", isAscending: false }],
                 limit: limit ?? 10,
+                filter,
             });
             if (!query.ids.length) {
                 return {
