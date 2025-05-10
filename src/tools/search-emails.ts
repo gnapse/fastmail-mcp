@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { createJmapClient } from "./jmap-client.js";
+import { createJmapClient } from "../jmap-client.js";
 
 export function registerSearchEmailsTool(server: McpServer) {
     server.tool(

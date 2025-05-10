@@ -1,5 +1,5 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { createJmapClient } from "./jmap-client.js";
+import { createJmapClient } from "../jmap-client.js";
 
 export function registerListMailboxesTool(server: McpServer) {
     server.tool(
