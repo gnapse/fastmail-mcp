@@ -1,6 +1,9 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { registerListEmailsTool } from "./list-emails-tool.js";
+import { registerListEmailsTool } from "./tools/list-emails.js";
+import { registerListMailboxesTool } from "./tools/list-mailboxes.js";
+import { registerGetEmailDetailsTool } from "./tools/get-email-details.js";
+import { registerSearchEmailsTool } from "./tools/search-emails.js";
 
 export async function startMcpServer() {
     const server = new McpServer({
@@ -9,6 +12,9 @@ export async function startMcpServer() {
     });
 
     registerListEmailsTool(server);
+    registerListMailboxesTool(server);
+    registerGetEmailDetailsTool(server);
+    registerSearchEmailsTool(server);
 
     const transport = new StdioServerTransport();
     await server.connect(transport);
