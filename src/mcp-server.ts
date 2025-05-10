@@ -21,12 +21,3 @@ export async function startMcpServer() {
 	const transport = new StdioServerTransport();
 	await server.connect(transport);
 }
-
-// If run directly, start the server (ESM compatible)
-if (import.meta.url === `file://${process.argv[1]}`) {
-	startMcpServer().catch((err) => {
-		// eslint-disable-next-line no-console
-		console.error("Failed to start MCP server:", err);
-		process.exit(1);
-	});
-}

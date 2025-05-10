@@ -2,7 +2,7 @@
 	"name": "jmap-mcpserver",
 	"version": "0.0.1",
 	"type": "module",
-	"main": "dist/mcp-server.js",
+	"main": "dist/main.js",
 	"files": ["dist", "src", "package.json", "LICENSE.txt", "README.md"],
 	"license": "MIT",
 	"description": "A JMAP MCP server for FastMail and other JAM-compatible email providers.",
@@ -18,7 +18,7 @@
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"build": "rimraf dist && tsc",
-		"dev": "npm run build && npx @modelcontextprotocol/inspector npx node dist/mcp-server.js",
+		"dev": "npm run build && npx @modelcontextprotocol/inspector npx node dist/main.js",
 		"setup": "cp .env.example .env && npm install",
 		"type-check": "tsc --noEmit",
 		"biome:sort-imports": "biome check --formatter-enabled=false --linter-enabled=false --organize-imports-enabled=true --write .",
