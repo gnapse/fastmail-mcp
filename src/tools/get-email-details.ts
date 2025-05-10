@@ -5,6 +5,7 @@ import { createJmapClient } from "../jmap-client.js";
 export function registerGetEmailDetailsTool(server: McpServer) {
 	server.tool(
 		"get-email-details",
+		"Get details about an email",
 		{
 			emailId: z
 				.string()

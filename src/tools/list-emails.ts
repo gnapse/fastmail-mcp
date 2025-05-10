@@ -13,6 +13,7 @@ type Filter = {
 export function registerListEmailsTool(server: McpServer) {
 	server.tool(
 		"list-emails",
+		"List the emails in a mailbox, or all emails from all mailboxes",
 		{
 			mailboxId: z
 				.string()

@@ -5,6 +5,7 @@ import { createJmapClient } from "../jmap-client.js";
 export function registerListMailboxesTool(server: McpServer) {
 	server.tool(
 		"list-mailboxes",
+		"List all mailboxes, with their IDs, names, roles, and total and unread email counts",
 		{}, // no arguments
 		async () => {
 			const client = createJmapClient();

@@ -6,6 +6,7 @@ import { createJmapClient } from "../jmap-client.js";
 export function registerListConversationTool(server: McpServer) {
 	server.tool(
 		"list-conversation",
+		"List the emails in a conversation (thread)",
 		{
 			emailId: z
 				.string()

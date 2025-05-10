@@ -20,6 +20,7 @@ type Filter = {
 export function registerSearchEmailsTool(server: McpServer) {
 	server.tool(
 		"search-emails",
+		"Search for emails by subject, sender, recipients, body, and more",
 		{
 			text: z
 				.string()
