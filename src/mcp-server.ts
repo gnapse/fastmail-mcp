@@ -14,8 +14,8 @@ export async function startMcpServer() {
     await server.connect(transport);
 }
 
-// If run directly, start the server
-if (require.main === module) {
+// If run directly, start the server (ESM compatible)
+if (import.meta.url === `file://${process.argv[1]}`) {
     startMcpServer().catch((err) => {
         // eslint-disable-next-line no-console
         console.error("Failed to start MCP server:", err);

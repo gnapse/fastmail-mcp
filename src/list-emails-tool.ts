@@ -6,7 +6,13 @@ export function registerListEmailsTool(server: McpServer) {
     server.tool(
         "list-emails",
         {
-            limit: z.number().int().min(1).max(50).optional(),
+            limit: z.coerce
+                .number()
+                .int()
+                .min(1)
+                .max(50)
+                .optional()
+                .describe("The maximum number of emails to return"),
         },
         async ({ limit }) => {
             const client = createJmapClient();
