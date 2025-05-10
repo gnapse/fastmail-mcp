@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { createJmapClient } from "../jmap-client.js";
+import { mapEmailListItem } from "../helpers/email-list-mapper.js";
 
 export function registerListEmailsTool(server: McpServer) {
     server.tool(
@@ -66,15 +67,19 @@ export function registerListEmailsTool(server: McpServer) {
             const [emails] = await client.api.Email.get({
                 accountId,
                 ids: query.ids,
-                properties: ["subject", "from", "receivedAt"],
+                properties: ["id", "subject", "from", "receivedAt"],
             });
 
-            const lines = emails.list.map(
-                (email: any) => `Subject: ${email.subject || "(no subject)"}`
-            );
+            const emailsList = emails.list.map(mapEmailListItem);
 
             return {
-                content: [{ type: "text", text: lines.join("\n") }],
+                content: [
+                    {
+                        type: "text",
+                        mimeType: "application/json",
+                        text: JSON.stringify(emailsList),
+                    },
+                ],
             };
         }
     );
