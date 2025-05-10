@@ -43,8 +43,53 @@ export function registerSearchEmailsTool(server: McpServer) {
                 .describe(
                     "The zero-based index of the first email to return (for pagination)"
                 ),
+            after: z
+                .string()
+                .optional()
+                .describe(
+                    "Only include emails received after this ISO date (inclusive)"
+                ),
+            before: z
+                .string()
+                .optional()
+                .describe(
+                    "Only include emails received before this ISO date (exclusive)"
+                ),
+            hasAttachment: z
+                .boolean()
+                .optional()
+                .describe(
+                    "Only include emails that have (or do not have) attachments"
+                ),
+            minSize: z
+                .number()
+                .int()
+                .optional()
+                .describe(
+                    "Only include emails with size >= this value (in bytes)"
+                ),
+            maxSize: z
+                .number()
+                .int()
+                .optional()
+                .describe(
+                    "Only include emails with size <= this value (in bytes)"
+                ),
         },
-        async ({ text, from, to, subject, mailboxId, limit, position }) => {
+        async ({
+            text,
+            from,
+            to,
+            subject,
+            mailboxId,
+            limit,
+            position,
+            after,
+            before,
+            hasAttachment,
+            minSize,
+            maxSize,
+        }) => {
             const client = createJmapClient();
             const accountId = await client.getPrimaryAccount();
 
@@ -54,6 +99,12 @@ export function registerSearchEmailsTool(server: McpServer) {
             if (to) filter.to = to;
             if (subject) filter.subject = subject;
             if (mailboxId) filter.inMailbox = mailboxId;
+            if (after) filter.after = after;
+            if (before) filter.before = before;
+            if (hasAttachment !== undefined)
+                filter.hasAttachment = hasAttachment;
+            if (minSize !== undefined) filter.minSize = minSize;
+            if (maxSize !== undefined) filter.maxSize = maxSize;
 
             const [query] = await client.api.Email.query({
                 accountId,
