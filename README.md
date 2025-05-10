@@ -32,5 +32,5 @@ This project exposes a Model Context Protocol (MCP) server that allows LLMs to a
 
 2. **Run the MCP server with inspector:**
     ```sh
-    npm run inspector
+    npm run dev
     ```
