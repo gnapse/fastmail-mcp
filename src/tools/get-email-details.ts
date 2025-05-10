@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { createJmapClient } from "./jmap-client.js";
+import { createJmapClient } from "../jmap-client.js";
 
 export function registerGetEmailDetailsTool(server: McpServer) {
     server.tool(
@@ -24,6 +24,7 @@ export function registerGetEmailDetailsTool(server: McpServer) {
                     "preview",
                     "textBody",
                     "bodyValues",
+                    "attachments",
                 ],
             });
 
@@ -48,7 +49,18 @@ export function registerGetEmailDetailsTool(server: McpServer) {
                 const partId = email.textBody[0].partId;
                 body = email.bodyValues[partId]?.value || body;
             }
-            const details = `Subject: ${subject}\nFrom: ${from}\nTo: ${to}\nDate: ${date}\nPreview: ${preview}\n\nBody:\n${body}`;
+
+            let attachmentsInfo = "";
+            if (email.attachments && email.attachments.length > 0) {
+                attachmentsInfo = "\n\nAttachments:";
+                for (const att of email.attachments) {
+                    attachmentsInfo += `\n- Name: ${
+                        att.name || "(unnamed)"
+                    }, Type: ${att.type}, Size: ${att.size} bytes`;
+                }
+            }
+
+            const details = `Subject: ${subject}\nFrom: ${from}\nTo: ${to}\nDate: ${date}\nPreview: ${preview}\n${attachmentsInfo}\n\nBody:\n${body}`;
             return {
                 content: [{ type: "text", text: details }],
             };
