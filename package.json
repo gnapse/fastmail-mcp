@@ -1,27 +1,51 @@
 {
-    "name": "jmap-mcpserver",
-    "version": "1.0.0",
-    "description": "",
-    "type": "module",
-    "main": "dist/mcp-server.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "rimraf dist && tsc",
-        "inspector": "npm run build && npx @modelcontextprotocol/inspector npx node dist/mcp-server.js",
-        "setup": "cp .env.example .env && npm install",
-        "type-check": "tsc --noEmit"
-    },
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
-    "dependencies": {
-        "@modelcontextprotocol/sdk": "^1.11.1",
-        "dotenv": "^16.5.0",
-        "jmap-jam": "^0.10.0"
-    },
-    "devDependencies": {
-        "@types/node": "^22.15.17",
-        "rimraf": "^6.0.1",
-        "typescript": "^5.8.3"
-    }
+	"name": "jmap-mcpserver",
+	"version": "0.0.1",
+	"type": "module",
+	"main": "dist/mcp-server.js",
+	"files": ["dist", "src", "package.json", "LICENSE.txt", "README.md"],
+	"license": "MIT",
+	"description": "A JMAP MCP server for FastMail and other JAM-compatible email providers.",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/gnapse/fastmail-mcp.git"
+	},
+	"author": {
+		"name": "Ernesto García",
+		"url": "https://github.com/gnapse"
+	},
+	"keywords": ["jmap", "mcp", "fastmail", "email", "server", "mcp-server"],
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"build": "rimraf dist && tsc",
+		"inspector": "npm run build && npx @modelcontextprotocol/inspector npx node dist/mcp-server.js",
+		"setup": "cp .env.example .env && npm install",
+		"type-check": "tsc --noEmit",
+		"biome:sort-imports": "biome check --formatter-enabled=false --linter-enabled=false --organize-imports-enabled=true --write .",
+		"lint:check": "biome lint",
+		"lint:write": "biome lint --write",
+		"format:check": "biome format",
+		"format:write": "biome format --write",
+		"check": "biome check",
+		"check:fix": "biome check --fix --unsafe",
+		"prepare": "husky"
+	},
+	"dependencies": {
+		"@modelcontextprotocol/sdk": "^1.11.1",
+		"dotenv": "^16.5.0",
+		"jmap-jam": "^0.10.0"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@types/node": "^22.15.17",
+		"husky": "^9.1.7",
+		"lint-staged": "^16.0.0",
+		"rimraf": "^6.0.1",
+		"typescript": "^5.8.3"
+	},
+	"lint-staged": {
+		"*": [
+			"biome check --write --no-errors-on-unmatched --files-ignore-unknown=true"
+		]
+	}
 }
