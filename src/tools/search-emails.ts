@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { createJmapClient } from "../jmap-client.js";
-import { mapEmailListItem } from "../helpers/email-list-mapper.js";
+import { getPaginatedEmailResults } from "../helpers/email-list-helpers.js";
 
 export function registerSearchEmailsTool(server: McpServer) {
     server.tool(
@@ -31,9 +31,20 @@ export function registerSearchEmailsTool(server: McpServer) {
                 .max(50)
                 .default(10)
                 .optional()
-                .describe("Maximum number of results to return"),
+                .describe(
+                    "The maximum number of results to return (for pagination)"
+                ),
+            position: z.coerce
+                .number()
+                .int()
+                .min(0)
+                .default(0)
+                .optional()
+                .describe(
+                    "The zero-based index of the first email to return (for pagination)"
+                ),
         },
-        async ({ text, from, to, subject, mailboxId, limit }) => {
+        async ({ text, from, to, subject, mailboxId, limit, position }) => {
             const client = createJmapClient();
             const accountId = await client.getPrimaryAccount();
 
@@ -49,6 +60,7 @@ export function registerSearchEmailsTool(server: McpServer) {
                 filter: Object.keys(filter).length ? filter : undefined,
                 sort: [{ property: "receivedAt", isAscending: false }],
                 limit: limit ?? 10,
+                position: position ?? 0,
             });
 
             if (!query.ids.length) {
@@ -59,20 +71,21 @@ export function registerSearchEmailsTool(server: McpServer) {
                 };
             }
 
-            const [emails] = await client.api.Email.get({
+            const result = await getPaginatedEmailResults({
+                client,
                 accountId,
                 ids: query.ids,
-                properties: ["id", "subject", "from", "receivedAt"],
+                position: position ?? 0,
+                limit: limit ?? 10,
+                total: query.total ?? 0,
             });
-
-            const emailsList = emails.list.map(mapEmailListItem);
 
             return {
                 content: [
                     {
                         type: "text",
                         mimeType: "application/json",
-                        text: JSON.stringify(emailsList),
+                        text: JSON.stringify(result),
                     },
                 ],
             };

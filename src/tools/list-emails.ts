@@ -1,20 +1,12 @@
 import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { createJmapClient } from "../jmap-client.js";
-import { mapEmailListItem } from "../helpers/email-list-mapper.js";
+import { getPaginatedEmailResults } from "../helpers/email-list-helpers.js";
 
 export function registerListEmailsTool(server: McpServer) {
     server.tool(
         "list-emails",
         {
-            limit: z.coerce
-                .number()
-                .int()
-                .min(1)
-                .max(50)
-                .default(10)
-                .optional()
-                .describe("The maximum number of emails to return"),
             mailboxId: z
                 .string()
                 .optional()
@@ -26,8 +18,27 @@ export function registerListEmailsTool(server: McpServer) {
                 .describe(
                     'Filter by read status: "read", "unread", or "all" (default)'
                 ),
+            limit: z.coerce
+                .number()
+                .int()
+                .min(1)
+                .max(50)
+                .default(10)
+                .optional()
+                .describe(
+                    "The maximum number of emails to return (for pagination)"
+                ),
+            position: z.coerce
+                .number()
+                .int()
+                .min(0)
+                .default(0)
+                .optional()
+                .describe(
+                    "The zero-based index of the first email to return (for pagination)"
+                ),
         },
-        async ({ limit, mailboxId, status }) => {
+        async ({ limit, mailboxId, status, position }) => {
             const client = createJmapClient();
             const accountId = await client.getPrimaryAccount();
 
@@ -55,6 +66,7 @@ export function registerListEmailsTool(server: McpServer) {
                 accountId,
                 sort: [{ property: "receivedAt", isAscending: false }],
                 limit: limit ?? 10,
+                position: position ?? 0,
                 filter,
             });
 
@@ -64,20 +76,21 @@ export function registerListEmailsTool(server: McpServer) {
                 };
             }
 
-            const [emails] = await client.api.Email.get({
+            const result = await getPaginatedEmailResults({
+                client,
                 accountId,
                 ids: query.ids,
-                properties: ["id", "subject", "from", "receivedAt"],
+                position: position ?? 0,
+                limit: limit ?? 10,
+                total: query.total ?? 0,
             });
-
-            const emailsList = emails.list.map(mapEmailListItem);
 
             return {
                 content: [
                     {
                         type: "text",
                         mimeType: "application/json",
-                        text: JSON.stringify(emailsList),
+                        text: JSON.stringify(result),
                     },
                 ],
             };
