@@ -9,30 +9,28 @@ This project exposes a Model Context Protocol (MCP) server that allows LLMs to a
 
 ## Setup
 
-1. **Install dependencies:**
+1. **Install dependencies and set up environment:**
    ```sh
-   npm install
+   npm run setup
    ```
 
-2. **Configure JMAP credentials:**
-   Edit `src/jmap-client.ts` and set your JMAP `bearerToken` and `sessionUrl`:
-   ```ts
-   const client = new JamClient({
-     bearerToken: 'YOUR_JMAP_TOKEN',
-     sessionUrl: 'https://jmap.example.com/jmap/session',
-   });
+2. **Configure environment variables:**
+   Update the `.env` file with your JMAP credentials:
+   ```env
+   JMAP_BEARER_TOKEN=your-jmap-bearer-token-here
+   JMAP_SESSION_URL=https://api.fastmail.com/jmap/session
    ```
 
 ## Usage
 
 1. **Build the project:**
    ```sh
-   npx tsc
+   npm run build
    ```
 
-2. **Run the MCP server:**
+2. **Run the MCP server with inspector:**
    ```sh
-   node dist/mcp-server.js
+   npm run inspector
    ```
 
 ## Tools

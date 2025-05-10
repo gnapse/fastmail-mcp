@@ -1,24 +1,27 @@
 {
-  "name": "jmap-mcpserver",
-  "version": "1.0.0",
-  "description": "",
-  "type": "module",
-  "main": "dist/mcp-server.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
-    "inspector": "npx @modelcontextprotocol/inspector npx node dist/mcp-server.js"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.11.1",
-    "dotenv": "^16.5.0",
-    "jmap-jam": "^0.10.0"
-  },
-  "devDependencies": {
-    "@types/node": "^22.15.17",
-    "typescript": "^5.8.3"
-  }
+    "name": "jmap-mcpserver",
+    "version": "1.0.0",
+    "description": "",
+    "type": "module",
+    "main": "dist/mcp-server.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "rimraf dist && tsc",
+        "inspector": "npm run build && npx @modelcontextprotocol/inspector npx node dist/mcp-server.js",
+        "setup": "cp .env.example .env && npm install",
+        "type-check": "tsc --noEmit"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@modelcontextprotocol/sdk": "^1.11.1",
+        "dotenv": "^16.5.0",
+        "jmap-jam": "^0.10.0"
+    },
+    "devDependencies": {
+        "@types/node": "^22.15.17",
+        "rimraf": "^6.0.1",
+        "typescript": "^5.8.3"
+    }
 }
