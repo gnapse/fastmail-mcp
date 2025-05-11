@@ -1,5 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
+import { getErrorMessage } from "../helpers/get-error-message.js";
 import { jsonContent } from "../helpers/mcp-content.js";
 import { createJmapClient } from "../jmap-client.js";
 
@@ -52,13 +53,20 @@ export function registerMoveThreadsToMailboxTool(server: McpServer) {
 				for (const emailId of thread.emailIds) {
 					update[emailId] = { mailboxIds: { [mailboxId]: true } };
 				}
-				await client.api.Email.set({ accountId, update });
-				summary.push({
-					threadId,
-					emailsMoved: thread.emailIds.length,
-					mailboxId,
-				});
+
+				try {
+					await client.api.Email.set({ accountId, update });
+					summary.push({
+						threadId,
+						emailsMoved: thread.emailIds.length,
+						mailboxId,
+					});
+				} catch (error) {
+					const message = getErrorMessage(error);
+					summary.push({ threadId, error: message });
+				}
 			}
+
 			return jsonContent({ summary });
 		},
 	);

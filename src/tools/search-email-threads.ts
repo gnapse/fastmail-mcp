@@ -1,6 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { getPaginatedEmailResults } from "../helpers/email-list-helpers.js";
+import { getPaginatedThreadResults } from "../helpers/email-list-helpers.js";
 import { errorContent, jsonContent } from "../helpers/mcp-content.js";
 import { createJmapClient } from "../jmap-client.js";
 
@@ -17,10 +17,10 @@ type Filter = {
 	maxSize?: number;
 };
 
-export function registerSearchEmailsTool(server: McpServer) {
+export function registerSearchEmailThreadsTool(server: McpServer) {
 	server.tool(
-		"search-emails",
-		"Search for emails by subject, sender, recipients, body, and more",
+		"search-email-threads",
+		"Search for email threads by subject, sender, recipients, body, and more",
 		{
 			text: z
 				.string()
@@ -121,7 +121,7 @@ export function registerSearchEmailsTool(server: McpServer) {
 			if (minSize !== undefined) filter.minSize = minSize;
 			if (maxSize !== undefined) filter.maxSize = maxSize;
 
-			const [query] = await client.api.Email.query({
+			const [emailQuery] = await client.api.Email.query({
 				accountId,
 				filter: Object.keys(filter).length ? filter : undefined,
 				sort: [{ property: "receivedAt", isAscending: false }],
@@ -129,19 +129,34 @@ export function registerSearchEmailsTool(server: McpServer) {
 				position: position ?? 0,
 			});
 
-			if (!query.ids.length) {
+			if (!emailQuery.ids.length) {
 				return errorContent("No matching emails found.");
 			}
 
-			const result = await getPaginatedEmailResults({
+			// Get emails to extract threadIds
+			const [emails] = await client.api.Email.get({
+				accountId,
+				ids: emailQuery.ids,
+				properties: ["id", "threadId", "receivedAt"],
+			});
+			const threadIdSet = new Set<string>();
+			for (const email of emails.list) {
+				if (email.threadId) threadIdSet.add(email.threadId);
+			}
+			const threadIds = Array.from(threadIdSet);
+
+			if (!threadIds.length) {
+				return errorContent("No threads found.");
+			}
+
+			const result = await getPaginatedThreadResults({
 				client,
 				accountId,
-				ids: query.ids,
+				threadIds,
 				position: position ?? 0,
 				limit: limit ?? 10,
-				total: query.total ?? 0,
+				total: threadIds.length,
 			});
-
 			return jsonContent(result);
 		},
 	);

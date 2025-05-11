@@ -1,6 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { getPaginatedEmailResults } from "../helpers/email-list-helpers.js";
+import { getPaginatedThreadResults } from "../helpers/email-list-helpers.js";
 import { errorContent, jsonContent } from "../helpers/mcp-content.js";
 import { createJmapClient } from "../jmap-client.js";
 
@@ -10,10 +10,10 @@ type Filter = {
 	notKeyword?: string;
 };
 
-export function registerListEmailsTool(server: McpServer) {
+export function registerListEmailThreadsTool(server: McpServer) {
 	server.tool(
-		"list-emails",
-		"List the emails in a mailbox, or all emails from all mailboxes",
+		"list-email-threads",
+		"List the email threads in a mailbox, or all threads from all mailboxes",
 		{
 			mailboxId: z
 				.string()
@@ -50,47 +50,63 @@ export function registerListEmailsTool(server: McpServer) {
 			const client = createJmapClient();
 			const accountId = await client.getPrimaryAccount();
 
-			// Build filter for mailbox and status
-			let filter: Filter | undefined = undefined;
+			// Build filter for mailbox and status (for emails)
+			let emailFilter: Filter | undefined = undefined;
 			if (mailboxId && status === "unread") {
-				filter = {
+				emailFilter = {
 					inMailbox: mailboxId,
 					notKeyword: "$seen",
 				};
 			} else if (mailboxId && status === "read") {
-				filter = {
+				emailFilter = {
 					inMailbox: mailboxId,
 					hasKeyword: "$seen",
 				};
 			} else if (mailboxId) {
-				filter = { inMailbox: mailboxId };
+				emailFilter = { inMailbox: mailboxId };
 			} else if (status === "unread") {
-				filter = { notKeyword: "$seen" };
+				emailFilter = { notKeyword: "$seen" };
 			} else if (status === "read") {
-				filter = { hasKeyword: "$seen" };
+				emailFilter = { hasKeyword: "$seen" };
 			}
 
-			const [query] = await client.api.Email.query({
+			// Query emails to get threadIds
+			const [emailQuery] = await client.api.Email.query({
 				accountId,
 				sort: [{ property: "receivedAt", isAscending: false }],
 				limit: limit ?? 10,
 				position: position ?? 0,
-				filter,
+				filter: emailFilter,
 			});
 
-			if (!query.ids.length) {
+			if (!emailQuery.ids.length) {
 				return errorContent("No emails found.");
 			}
 
-			const result = await getPaginatedEmailResults({
+			// Get emails to extract threadIds
+			const [emails] = await client.api.Email.get({
+				accountId,
+				ids: emailQuery.ids,
+				properties: ["id", "threadId", "receivedAt"],
+			});
+			const threadIdSet = new Set<string>();
+			for (const email of emails.list) {
+				if (email.threadId) threadIdSet.add(email.threadId);
+			}
+			const threadIds = Array.from(threadIdSet);
+
+			if (!threadIds.length) {
+				return errorContent("No threads found.");
+			}
+
+			const result = await getPaginatedThreadResults({
 				client,
 				accountId,
-				ids: query.ids,
+				threadIds,
 				position: position ?? 0,
 				limit: limit ?? 10,
-				total: query.total ?? 0,
+				total: threadIds.length,
 			});
-
 			return jsonContent(result);
 		},
 	);

@@ -1,44 +1,62 @@
 import type JamClient from "jmap-jam";
 
-function mapEmailListItem(email: {
-	from: { name?: string; email: string }[] | undefined;
-	subject: string | undefined;
-	id: string;
-	receivedAt: string;
-}) {
-	return {
-		id: email.id,
-		subject: email.subject || "(no subject)",
-		from: email.from?.map((a) => a.name || a.email).join(", ") || "",
-		receivedAt: email.receivedAt || "",
-	};
-}
-
-export async function getPaginatedEmailResults({
+export async function getPaginatedThreadResults({
 	client,
 	accountId,
-	ids,
+	threadIds,
 	position,
 	limit,
 	total,
 }: {
 	client: JamClient;
 	accountId: string;
-	ids: string[];
+	threadIds: string[];
 	position: number;
 	limit: number;
 	total: number;
 }) {
-	const [emails] = await client.api.Email.get({
+	const pagedThreadIds = threadIds.slice(position, position + limit);
+	const [threads] = await client.api.Thread.get({
 		accountId,
-		ids,
-		properties: ["id", "subject", "from", "receivedAt"],
+		ids: pagedThreadIds,
 	});
 
-	const emailsList = emails.list.map(mapEmailListItem);
+	const threadSummaries = await Promise.all(
+		threads.list.map(async (thread) => {
+			if (!thread.emailIds || thread.emailIds.length === 0) return null;
+			const [threadEmails] = await client.api.Email.get({
+				accountId,
+				ids: thread.emailIds,
+				properties: ["id", "subject", "from", "receivedAt"],
+			});
+			const sorted = threadEmails.list
+				.slice()
+				.sort(
+					(a, b) =>
+						new Date(b.receivedAt).getTime() -
+						new Date(a.receivedAt).getTime(),
+				);
+			const latest = sorted[0];
+			return {
+				threadId: thread.id,
+				emailIds: thread.emailIds,
+				summary: latest
+					? {
+							subject: latest.subject || "(no subject)",
+							from:
+								latest.from
+									?.map((a) => a.name || a.email)
+									.join(", ") || "",
+							receivedAt: latest.receivedAt || "",
+						}
+					: null,
+			};
+		}),
+	);
 
+	const filtered = threadSummaries.filter(Boolean);
 	return {
-		emails: emailsList,
+		threads: filtered,
 		position,
 		limit,
 		total,
