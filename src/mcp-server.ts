@@ -2,9 +2,9 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { registerArchiveThreadsTool } from "./tools/archive-threads.js";
 import { registerGetEmailDetailsTool } from "./tools/get-email-details.js";
-import { registerListConversationTool } from "./tools/list-conversation.js";
 import { registerListEmailThreadsTool } from "./tools/list-email-threads.js";
 import { registerListMailboxesTool } from "./tools/list-mailboxes.js";
+import { registerListThreadMessagesTool } from "./tools/list-thread-messages.js";
 import { registerMarkThreadUnreadTool } from "./tools/mark-thread-unread.js";
 import { registerMarkThreadsReadTool } from "./tools/mark-threads-read.js";
 import { registerMoveThreadsToMailboxTool } from "./tools/move-threads-to-mailbox.js";
@@ -18,7 +18,7 @@ export async function startMcpServer() {
 
 	registerListMailboxesTool(server);
 	registerGetEmailDetailsTool(server);
-	registerListConversationTool(server);
+	registerListThreadMessagesTool(server);
 	registerMarkThreadsReadTool(server);
 	registerMarkThreadUnreadTool(server);
 	registerMoveThreadsToMailboxTool(server);

@@ -3,14 +3,16 @@ import { z } from "zod";
 import { errorContent, jsonContent } from "../helpers/mcp-content.js";
 import { createJmapClient } from "../jmap-client.js";
 
-export function registerListConversationTool(server: McpServer) {
+export function registerListThreadMessagesTool(server: McpServer) {
 	server.tool(
-		"list-conversation",
-		"List the emails in a conversation (thread)",
+		"list-thread-messages",
+		"List the emails in a thread (conversation)",
 		{
 			emailId: z
 				.string()
-				.describe("The ID of the email to fetch the conversation for"),
+				.describe(
+					"The ID of the email to fetch the thread messages for",
+				),
 		},
 		async ({ emailId }) => {
 			const client = createJmapClient();
