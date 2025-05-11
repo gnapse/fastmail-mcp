@@ -1,7 +1,7 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { getPaginatedThreadResults } from "../helpers/email-list-helpers.js";
 import { errorContent, jsonContent } from "../helpers/mcp-content.js";
+import { getPaginatedThreadResults } from "../helpers/threads-pagination.js";
 import { createJmapClient } from "../jmap-client.js";
 
 type Filter = {
