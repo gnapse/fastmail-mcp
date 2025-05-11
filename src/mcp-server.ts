@@ -5,6 +5,8 @@ import { registerListConversationTool } from "./tools/list-conversation.js";
 import { registerListEmailsTool } from "./tools/list-emails.js";
 import { registerListMailboxesTool } from "./tools/list-mailboxes.js";
 import { registerSearchEmailsTool } from "./tools/search-emails.js";
+import { registerMarkThreadsReadTool } from "./tools/mark-threads-read.js";
+import { registerMarkThreadUnreadTool } from "./tools/mark-thread-unread.js";
 
 export async function startMcpServer() {
 	const server = new McpServer({
@@ -17,6 +19,8 @@ export async function startMcpServer() {
 	registerGetEmailDetailsTool(server);
 	registerSearchEmailsTool(server);
 	registerListConversationTool(server);
+	registerMarkThreadsReadTool(server);
+	registerMarkThreadUnreadTool(server);
 
 	const transport = new StdioServerTransport();
 	await server.connect(transport);

@@ -52,6 +52,8 @@ This project is in a very early stage of development. Currently, it only provide
 -   **list-emails**: List the emails in a mailbox, or all emails from all mailboxes
 -   **list-conversation**: List the emails in a conversation (thread)
 -   **get-email-details**: Get details about an email
+-   **mark-threads-read**: Mark all emails in one or more threads as read
+-   **mark-thread-unread**: Mark emails in a thread as unread (all or just the last)
 
 ## Dependencies
 
