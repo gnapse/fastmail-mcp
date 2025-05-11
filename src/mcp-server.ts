@@ -1,6 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { registerArchiveThreadsTool } from "./tools/archive-threads.js";
+import { registerDeleteThreadsTool } from "./tools/delete-threads.js";
 import { registerGetEmailDetailsTool } from "./tools/get-email-details.js";
 import { registerListEmailThreadsTool } from "./tools/list-email-threads.js";
 import { registerListMailboxesTool } from "./tools/list-mailboxes.js";
@@ -32,6 +33,7 @@ export async function startMcpServer() {
 	registerArchiveThreadsTool(server);
 	registerListEmailThreadsTool(server);
 	registerSearchEmailThreadsTool(server);
+	registerDeleteThreadsTool(server);
 
 	const transport = new StdioServerTransport();
 	await server.connect(transport);

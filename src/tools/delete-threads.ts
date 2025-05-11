@@ -4,34 +4,34 @@ import { getMailboxByRole } from "../helpers/mailbox-helpers.js";
 import { errorContent, jsonContent } from "../helpers/mcp-content.js";
 import { createJmapClient } from "../jmap-client.js";
 
-export function registerArchiveThreadsTool(server: McpServer) {
+export function registerDeleteThreadsTool(server: McpServer) {
 	server.tool(
-		"archive-threads",
-		"Move all emails in one or more threads to the Archive mailbox",
+		"delete-threads",
+		"Move all emails in one or more threads to the Trash mailbox (soft delete)",
 		{
 			threadIds: z
 				.array(z.string())
 				.min(1)
 				.max(10)
-				.describe("Array of thread IDs to archive"),
+				.describe("Array of thread IDs to delete (move to Trash)"),
 		},
 		async ({ threadIds }) => {
 			const client = createJmapClient();
 			const accountId = await client.getPrimaryAccount();
 
-			const archiveMailbox = await getMailboxByRole({
+			const trashMailbox = await getMailboxByRole({
 				client,
 				accountId,
-				role: "archive",
+				role: "trash",
 			});
-			if (!archiveMailbox) {
-				return errorContent("No archive mailbox found");
+			if (!trashMailbox) {
+				return errorContent("No Trash mailbox found");
 			}
-			const mailboxId = archiveMailbox.id;
+			const mailboxId = trashMailbox.id;
 
 			const summary: {
 				threadId: string;
-				emailsArchived?: number;
+				emailsDeleted?: number;
 				error?: string;
 				mailboxId?: string;
 			}[] = [];
@@ -41,7 +41,6 @@ export function registerArchiveThreadsTool(server: McpServer) {
 					accountId,
 					ids: [threadId],
 				});
-
 				const thread = threads.list[0];
 				if (
 					!thread ||
@@ -54,8 +53,6 @@ export function registerArchiveThreadsTool(server: McpServer) {
 					});
 					continue;
 				}
-
-				// Move all emails in the thread to the archive mailbox
 				const update: Record<
 					string,
 					{ mailboxIds: { [key: string]: boolean } }
@@ -63,14 +60,14 @@ export function registerArchiveThreadsTool(server: McpServer) {
 				for (const emailId of thread.emailIds) {
 					update[emailId] = { mailboxIds: { [mailboxId]: true } };
 				}
-
 				await client.api.Email.set({ accountId, update });
 				summary.push({
 					threadId,
-					emailsArchived: thread.emailIds.length,
+					emailsDeleted: thread.emailIds.length,
 					mailboxId,
 				});
 			}
+
 			return jsonContent({ summary });
 		},
 	);

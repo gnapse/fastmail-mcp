@@ -55,9 +55,10 @@ Nevertheless, our goal is to provide a small set of tools that enable complete w
 -   **list-thread-messages**: List the emails in a thread (conversation)
 -   **get-email-details**: Get details about an email
 -   **move-threads-to-mailbox**: Move all emails in one or more threads to a target mailbox
--   **archive-threads**: Move all emails in one or more threads to the Archive mailbox
 -   **mark-threads-read**: Mark all emails in one or more threads as read
 -   **mark-thread-unread**: Mark emails in a thread as unread (all or just the last)
+-   **archive-threads**: Move all emails in one or more threads to the Archive mailbox
+-   **delete-threads**: Move all emails in one or more threads to the Trash mailbox (soft delete)
 
 ## Dependencies
 
