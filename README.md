@@ -43,15 +43,19 @@ An MCP server to connect to Fastmail, or other jmap-based email services
 
 ## Features
 
-This project is in a very early stage of development. Currently, it only provides read-only tools for interacting with your email, but we are working on adding more tools to fully manage your email in the future.
+This project is in its early stages. Expect more and/or better tools soon.
+
+Nevertheless, our goal is to provide a small set of tools that enable complete workflows, rather than just atomic actions, striking a balance between flexibility and efficiency for LLMs.
 
 ### Available Tools
 
 -   **list-mailboxes**: List all mailboxes, with their IDs, names, roles, and total and unread email counts
--   **search-emails**: Search for emails by subject, sender, recipients, body, and more
--   **list-emails**: List the emails in a mailbox, or all emails from all mailboxes
--   **list-conversation**: List the emails in a conversation (thread)
+-   **search-email-threads**: Search for email threads by subject, sender, recipients, body, and more
+-   **list-email-threads**: List the email threads in a mailbox, or all threads from all mailboxes
+-   **list-thread-messages**: List the emails in a thread (conversation)
 -   **get-email-details**: Get details about an email
+-   **move-threads-to-mailbox**: Move all emails in one or more threads to a target mailbox
+-   **archive-threads**: Move all emails in one or more threads to the Archive mailbox
 -   **mark-threads-read**: Mark all emails in one or more threads as read
 -   **mark-thread-unread**: Mark emails in a thread as unread (all or just the last)
 
