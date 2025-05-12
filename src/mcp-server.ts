@@ -3,13 +3,13 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { registerArchiveThreadsTool } from "./tools/archive-threads.js";
 import { registerDeleteThreadsTool } from "./tools/delete-threads.js";
 import { registerGetEmailDetailsTool } from "./tools/get-email-details.js";
-import { registerListEmailThreadsTool } from "./tools/list-email-threads.js";
 import { registerListMailboxesTool } from "./tools/list-mailboxes.js";
 import { registerListThreadMessagesTool } from "./tools/list-thread-messages.js";
+import { registerListThreadsTool } from "./tools/list-threads.js";
 import { registerMarkThreadUnreadTool } from "./tools/mark-thread-unread.js";
 import { registerMarkThreadsReadTool } from "./tools/mark-threads-read.js";
 import { registerMoveThreadsToMailboxTool } from "./tools/move-threads-to-mailbox.js";
-import { registerSearchEmailThreadsTool } from "./tools/search-email-threads.js";
+import { registerSearchThreadsTool } from "./tools/search-threads.js";
 
 const instructions = `
 Tools to help you manage email. An email account consists of
@@ -31,8 +31,8 @@ export async function startMcpServer() {
 	registerMarkThreadUnreadTool(server);
 	registerMoveThreadsToMailboxTool(server);
 	registerArchiveThreadsTool(server);
-	registerListEmailThreadsTool(server);
-	registerSearchEmailThreadsTool(server);
+	registerListThreadsTool(server);
+	registerSearchThreadsTool(server);
 	registerDeleteThreadsTool(server);
 
 	const transport = new StdioServerTransport();

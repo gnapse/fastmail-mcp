@@ -17,9 +17,9 @@ type Filter = {
 	maxSize?: number;
 };
 
-export function registerSearchEmailThreadsTool(server: McpServer) {
+export function registerSearchThreadsTool(server: McpServer) {
 	server.tool(
-		"search-email-threads",
+		"search-threads",
 		"Search for email threads by subject, sender, recipients, body, and more",
 		{
 			text: z

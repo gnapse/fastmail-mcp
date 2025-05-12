@@ -10,9 +10,9 @@ type Filter = {
 	notKeyword?: string;
 };
 
-export function registerListEmailThreadsTool(server: McpServer) {
+export function registerListThreadsTool(server: McpServer) {
 	server.tool(
-		"list-email-threads",
+		"list-threads",
 		"List the email threads in a mailbox, or all threads from all mailboxes",
 		{
 			mailboxId: z

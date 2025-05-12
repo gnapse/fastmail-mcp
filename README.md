@@ -50,8 +50,8 @@ Nevertheless, our goal is to provide a small set of tools that enable complete w
 ### Available Tools
 
 -   **list-mailboxes**: List all mailboxes, with their IDs, names, roles, and total and unread email counts
--   **search-email-threads**: Search for email threads by subject, sender, recipients, body, and more
--   **list-email-threads**: List the email threads in a mailbox, or all threads from all mailboxes
+-   **search-threads**: Search for email threads by subject, sender, recipients, body, and more
+-   **list-threads**: List the email threads in a mailbox, or all threads from all mailboxes
 -   **list-thread-messages**: List the emails in a thread (conversation)
 -   **get-email-details**: Get details about an email
 -   **move-threads-to-mailbox**: Move all emails in one or more threads to a target mailbox
